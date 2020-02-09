@@ -25,7 +25,7 @@ CON
     NEOPIX_PIN  = 16                ' I/O pin array is connected to
     WIDTH       = 87                ' Width (or length) of array
     HEIGHT      = 1                 ' Height of array (use 1 if array is just arranged in a strip)
-
+                                    ' NOTE: Total combined must be between 1 and 1024, inclusive
     XMAX        = WIDTH-1
     YMAX        = HEIGHT-1
     BUFFSZ      = WIDTH * HEIGHT
