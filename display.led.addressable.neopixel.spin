@@ -91,7 +91,7 @@ CON
 VAR
 
     long cog
-    long _draw_buffer, _buff_sz                                  ' pointer to active pixel buffer
+    long _ptr_drawbuffer, _buff_sz                                  ' pointer to active pixel buffer
     long _disp_width, _disp_height, _disp_xmax, _disp_ymax
     long npixels                                                 ' number of pixels in buffer
 
@@ -212,20 +212,20 @@ PUB Address(dispbuffer_address, count, pin, bits) : c
 ' -- count is # of elements in the array 
 ' -- pin is serial output to pixels
 ' -- bits is bit count for pixel type (24 or 32)
-    _draw_buffer := dispbuffer_address
+    _ptr_drawbuffer := dispbuffer_address
     npixels := count
 
-    c := _draw_buffer | ((npixels-1) << 16) | (pin << 26)   ' compress for driver cog
+    c := _ptr_drawbuffer | ((npixels-1) << 16) | (pin << 26)   ' compress for driver cog
 
     if (bits == 32)
         c |= |<31                                           ' set bit 31 for 32-bit pixels
 
     connection := c                                         ' set new connection
-    result := _draw_buffer
+    result := _ptr_drawbuffer
 
 PUB ClearAccel
 ' Turns off all LEDs
-    longfill(_draw_buffer, $00_00_00_00, npixels)
+    longfill(_ptr_drawbuffer, $00_00_00_00, npixels)
 
 PUB Connected
 ' Returns true when latest connection details picked up by driver
