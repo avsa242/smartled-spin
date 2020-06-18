@@ -5,7 +5,7 @@
     Description: Demo of the neopixel driver
     Copyright (c) 2020
     Started Feb 8, 2020
-    Updated Feb 9, 2020
+    Updated Jun 18, 2020
     See end of file for terms of use.
     --------------------------------------------
 }
@@ -15,6 +15,7 @@ CON
     _clkmode    = cfg#_clkmode
     _xinfreq    = cfg#_xinfreq
 
+' -- User-modifiable constants
     SER_RX      = 31
     SER_TX      = 30
     SER_BAUD    = 115_200
@@ -22,10 +23,12 @@ CON
     LED         = cfg#LED1
 
     NEOPIX_MODEL= $6812_32          ' LED array type: $2811, $2812, $2812B, $2813, $6812_24, $6812_32, $1803
-    NEOPIX_PIN  = 16                ' I/O pin array is connected to
+    NEOPIX_PIN  = 23                ' I/O pin array is connected to
     WIDTH       = 87                ' Width (or length) of array
     HEIGHT      = 1                 ' Height of array (use 1 if array is just arranged in a strip)
                                     ' NOTE: Total combined must be between 1 and 1024, inclusive
+' --
+
     XMAX        = WIDTH-1
     YMAX        = HEIGHT-1
     BUFFSZ      = WIDTH * HEIGHT
@@ -41,9 +44,8 @@ OBJ
 
 VAR
 
-    long _framebuff[BUFFSZ]
+    long _framebuff[BUFFSZ], _drawbuff[BUFFSZ]
     long _bgcolor
-    byte _ser_cog
 
 PUB Main
 
@@ -73,17 +75,18 @@ PUB LarsonScanner(color, delay_ms) | i
 
 PUB Setup
 
-    repeat until _ser_cog := ser.Start (115_200)
-    time.MSleep(30)
-    ser.Clear
-    ser.Str(string("Serial terminal started", ser#CR, ser#LF))
-    if neopix.Startx(NEOPIX_MODEL, WIDTH, HEIGHT, @_framebuff, NEOPIX_PIN)
-        ser.Str(string("Neopixel driver started", ser#CR, ser#LF))
+    repeat until ser.StartRXTX (SER_RX, SER_TX, 0, SER_BAUD)
+    time.msleep(30)
+    ser.clear
+    ser.str(string("Serial terminal started", ser#CR, ser#LF))
+    if neopix.Start(NEOPIX_PIN, WIDTH, HEIGHT, NEOPIX_MODEL, @_framebuff)
+        neopix.DrawTo(@_drawbuff)
+        ser.str(string("Neopixel driver started", ser#CR, ser#LF))
     else
-        ser.Str(string("Neopixel driver failed to start - halting", ser#CR, ser#LF))
+        ser.str(string("Neopixel driver failed to start - halting", ser#CR, ser#LF))
         neopix.Stop
-        time.MSleep(5)
-        ser.Stop
+        time.msleep(5)
+        ser.stop
         FlashLED(LED, 500)
 
 PUB Stop

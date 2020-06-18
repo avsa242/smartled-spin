@@ -4,7 +4,7 @@
     Author: Jesse Burt
     Description: Driver for Neopixel addressable LED arrays
     Started Jan 4, 2020
-    Updated Jan 9, 2020
+    Updated Jun 18, 2020
     See end of file for terms of use.
     --------------------------------------------
 
@@ -57,8 +57,9 @@
 
 CON
 
-    MAX_PIXELS  = 1024                                             ' max pixels per strip
-    MAX_COLOR   = 16_777_216  
+    MAX_PIXELS  = 1024                                          ' max pixels per strip
+    MAX_COLOR   = 16_777_215
+    BYTESPERPX  = 4
   
   ' borrowed from Gavin Garner's TM1804 LED driver
   ' -- additional colors by Lachlan   
@@ -90,28 +91,29 @@ CON
 
 VAR
 
-    long cog
-    long _ptr_framebuffer, _buff_sz                                  ' pointer to active pixel buffer
+    long _cog
+    long _ptr_framebuffer, _ptr_drawbuffer, _buff_sz            ' pointer to active pixel buffer
     long _disp_width, _disp_height, _disp_xmax, _disp_ymax
-    long npixels                                                 ' number of pixels in buffer
+    long _npixels                                               ' number of pixels in buffer
+    word BYTESPERLN
 
 ' do not modify order; this structure passed to PASM cog
 '
-    long connection                                              ' compressed connection details
-    long resetticks                                              ' ticks in reset period
-    long rgfix                                                   ' swap r&g? + bit count for pixels
-    long t0h                                                     ' bit0 high time (ticks)      
-    long t1h                                                     ' bit1 high time (ticks)
-    long cycleticks                                              ' ticks in 1.25us
-    long updateframe
+    long _connection                                            ' compressed connection details
+    long _resetticks                                            ' ticks in reset period
+    long _rgfix                                                 ' swap r&g? + bit count for pixels
+    long _t0h                                                   ' bit0 high time (ticks)      
+    long _t1h                                                   ' bit1 high time (ticks)
+    long _cycleticks                                            ' ticks in 1.25us
+    long _updateframe
 
 PUB Null
 ' This is not a top-level object
-' -- this code should only be called from another object
+' -- this code should only be calleuud from another object
   
-PUB Startx(device, width, height, dispbuffer_address, pin) | ustix, holdoff, rgswap, bits, ns0h, ns1h, nsperiod, count
+PUB Start(NEOPIX_PIN, WIDTH, HEIGHT, device, addr) | ustix, holdoff, rgswap, bits, ns0h, ns1h, nsperiod, count
 ' Start smart pixel driver driver
-' -- dispbuffer_address is pointer to [long] array holding pixel data
+' -- addr is pointer to [long] array holding pixel data
 ' -- pin is serial output to pixels
 ' -- holdoff is the delay between data bursts
 '    * units are 100us (0.1ms) 10 units = 1ms
@@ -122,126 +124,136 @@ PUB Startx(device, width, height, dispbuffer_address, pin) | ustix, holdoff, rgs
 ' -- nsperiod is period in ns increments (1250 = 1.25us for 800kHz)
     holdoff := 1
     case device
-        $2811:                                              ' WS2811
+        $2811:                                                  ' WS2811
             rgswap := FALSE
-            bits := 24                                      ' 24bpp
+            bits := 24                                          ' 24bpp
             ns0h := 250
             ns1h := 600
             nsperiod := 1250
-        $2812:                                              ' WS2812
+        $2812:                                                  ' WS2812
             rgswap := TRUE
-            bits := 24                                      ' 24bpp
+            bits := 24                                          ' 24bpp
             ns0h := 350
             ns1h := 700
             nsperiod := 1250
-        $2812B:                                             ' WS2812B
+        $2812B:                                                 ' WS2812B
             rgswap := TRUE
-            bits := 24                                      ' 24bpp
+            bits := 24                                          ' 24bpp
             ns0h := 400
             ns1h := 800
             nsperiod := 1250
-        $2813:                                              ' WS2813
+        $2813:                                                  ' WS2813
             rgswap := TRUE
-            bits := 24                                      ' 24bpp
+            bits := 24                                          ' 24bpp
             ns0h := 375
             ns1h := 875
             nsperiod := 1250
-        $6812_24:                                           ' SK6812 (RGB)
+        $6812_24:                                               ' SK6812 (RGB)
             rgswap := TRUE
-            bits := 24                                      ' 24bpp
+            bits := 24                                          ' 24bpp
             ns0h := 300
             ns1h := 600
             nsperiod := 1250
-        $6812_32:                                           ' SK6812 (RGBW)
+        $6812_32:                                               ' SK6812 (RGBW)
             rgswap := TRUE
-            bits := 32                                      ' 32bpp
+            bits := 32                                          ' 32bpp
             ns0h := 300
             ns1h := 600
             nsperiod := 1250
-        $1803:                                              ' TM1803
+        $1803:                                                  ' TM1803
             rgswap := FALSE
-            bits := 24                                      ' 24bpp
+            bits := 24                                          ' 24bpp
             ns0h := 780
             ns1h := 1550
             nsperiod := 2330
         OTHER:
             return FALSE
 
-    Stop                                                    ' stop if running
-    dira[pin] := 0                                          ' clear tx pin in this cog
+    Stop                                                        ' stop if running
+    dira[NEOPIX_PIN] := 0                                       ' clear tx pin in this cog
 
-    if (clkfreq < 80_000_000)                               ' requires 80MHz clock
+    if (clkfreq < 80_000_000)                                   ' requires 80MHz clock
         return FALSE
 
     count := width * height
-    if count < 1 or count > 1024                            ' Must be between 1 and 1024 pixels, inclusive
+    if count < 1 or count > 1024                                ' Must be between 1 and 1024 pixels, inclusive
         return FALSE
 
-    ustix := clkfreq / 1_000_000                            ' ticks in 1us
+    ustix := clkfreq / 1_000_000                                ' ticks in 1us
 
   ' set cog parameters
 
-    Address(dispbuffer_address, count, pin, bits)           ' set connection details
+    Address(addr, count, NEOPIX_PIN, bits)                      ' set connection details
   
-    resetticks := ustix * 100 * (1 #> holdoff <# 50)        ' note: 80us min reset timing
-    rgfix      := rgswap <> 0                               ' promote non-zero to true
-    t0h        := ustix * ns0h / 1000 - 9                   ' pulse widths in ticks (adjusted)
-    t1h        := ustix * ns1h / 1000 - 9
-    cycleticks := ustix * nsperiod / 1000
+    _resetticks := ustix * 100 * (1 #> holdoff <# 50)           ' note: 80us min reset timing
+    _rgfix      := rgswap <> 0                                  ' promote non-zero to true
+    _t0h        := ustix * ns0h / 1000 - 9                      ' pulse widths in ticks (adjusted)
+    _t1h        := ustix * ns1h / 1000 - 9
+    _cycleticks := ustix * nsperiod / 1000
    
-    cog := cognew(@pixdriver, @connection) + 1              ' start the cog
-    if (cog)                                                ' if it started
-        repeat until (connection == 0)                      '  wait until ready
+    _cog := cognew(@pixdriver, @_connection) + 1                ' start the cog
+    if (_cog)                                                   ' if it started
+        repeat until (_connection == 0)                         '  wait until ready
 
     _disp_width := width
     _disp_height := height
     _disp_xmax := _disp_width - 1
     _disp_ymax := _disp_height - 1
     _buff_sz := (_disp_width * _disp_height) * (bits >> 3)
-    return cog                                                      
+    BYTESPERLN := _disp_width * BYTESPERPX
+    return _cog
 
 PUB Stop
 ' Stops pixel driver cog (if running)
-    if (cog)
-        cogstop(cog - 1)
-        cog := 0
+    if Running
+        cogstop(_cog - 1)
+        _cog := 0
 
-PUB Address(dispbuffer_address, count, pin, bits) : c
-' Assigns buffer at dispbuffer_address to pixel driver
-' -- dispbuffer_address is pointer to long array
+PUB Address(addr, count, pin, bits) : c
+' Assigns buffer at addr to pixel driver
+' -- addr is pointer to long array
 ' -- count is # of elements in the array 
 ' -- pin is serial output to pixels
 ' -- bits is bit count for pixel type (24 or 32)
-    _ptr_framebuffer := dispbuffer_address
-    npixels := count
+    _ptr_framebuffer := addr
+    _ptr_drawbuffer := addr
+    _npixels := count
 
-    c := _ptr_framebuffer | ((npixels-1) << 16) | (pin << 26)   ' compress for driver cog
+    c := _ptr_framebuffer | ((_npixels-1) << 16) | (pin << 26)  ' compress for driver cog
 
     if (bits == 32)
-        c |= |<31                                           ' set bit 31 for 32-bit pixels
+        c |= |<31                                               ' set bit 31 for 32-bit pixels
 
-    connection := c                                         ' set new connection
+    _connection := c                                            ' set new connection
     result := _ptr_framebuffer
 
 PUB ClearAccel
 ' Turns off all LEDs
-    longfill(_ptr_framebuffer, $00_00_00_00, npixels)
+    longfill(_ptr_framebuffer, $00_00_00_00, _npixels)
 
 PUB Connected
 ' Returns true when latest connection details picked up by driver
-    return (connection == 0)
+    return (_connection == 0)
+
+PUB DrawTo(addr)
+' Set address of (optional) draw/render buffer
+'   NOTE: This is typically used as an offscreen buffer,
+'       to subsequently be copied to the display or "live" buffer,
+'       once a complete frame is rendered.
+    _ptr_drawbuffer := addr
 
 PUB NumPixels 
 ' Returns number of pixels in assiged pixel array                      
-    return npixels
+    return _npixels
 
 PUB Running
 ' Returns true if running
-    return (cog <> 0)
+    return (_cog <> 0)
 
 PUB Update
-'Dummy method
-'XXX TODO: Rewrite to signal PASM engine to send the pix array to the LEDs
+' Write the draw buffer to the display
+'   NOTE: This is only required when using double-buffering
+    longmove(_ptr_framebuffer, _ptr_drawbuffer, _buff_sz/4)
 
 DAT
 ' Gamma table
