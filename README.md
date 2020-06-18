@@ -16,8 +16,8 @@ P1/SPIN1:
 * spin-standard-library
 * 1 extra core/cog for the PASM Neopixel engine
 
-P2/SPIN2:
-* p2-spin-standard-library
+~~P2/SPIN2:~~
+* ~~p2-spin-standard-library~~ _(not yet implemented)_
 
 ## Compiler Compatibility
 
@@ -29,9 +29,7 @@ P2/SPIN2:
 ## Limitations
 
 * Very early in development - may malfunction, or outright fail to build
-* Engine currently lacks a signal for updating the LED array with the display buffer, so changes to the display are always immediate
 
 ## TODO
 
-- [ ] Implement double-buffering
-- [ ] Implement buffer update signal
+- [x] Implement double-buffering
