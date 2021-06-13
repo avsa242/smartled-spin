@@ -19,13 +19,13 @@ P1/SPIN1:
 * Presence of bitmap graphics library
 
 P2/SPIN2:
-* 16MHz Fsys minimum
+* 20MHz Fsys minimum
 * p2-spin-standard-library
 * Presence of bitmap graphics library
 
 ## Compiler Compatibility
 
-* P1/SPIN1: OpenSpin (tested with 1.00.81)
+* P1/SPIN1: OpenSpin (tested with 1.00.81), FlexSpin (tested with 5.5.0)
 * P2/SPIN2: FlexSpin (tested with 5.5.0)
 * ~~BST~~ (incompatible - no preprocessor)
 * ~~Propeller Tool~~ (incompatible - no preprocessor)
