@@ -1,56 +1,15 @@
 {                                                                                                               
     --------------------------------------------
-    Filename: display.led.addressable.neopixel.spin
+    Filename: display.led.smart.spin
     Author: Jesse Burt
-    Description: Driver for Neopixel addressable LED arrays
+    Description: Driver for various smart LED arrays
     Started Jan 4, 2020
     Updated Apr 4, 2021
     See end of file for terms of use.
     --------------------------------------------
 
-    NOTE: This is a modified version of Jon McPhalen's jm_rgbx_pixel.spin driver.
-        Original header preserved below.
-}
-'' =================================================================================================             
-''
-''   File....... jm_rgbx_pixel.spin
-''   Purpose.... 800kHz driver for WS281x & SK681xRGBW LEDs
-''   Author..... Jon "JonnyMac" McPhalen
-''               Copyright (C) 2016-18 Jon McPhalen
-''               -- see below for terms of use
-''   E-mail..... jon@jonmcphalen.com
-''   Started.... 
-''   Updated.... 10 NOV 2017
-''               -- added WS2813, updated WS2811 timing
-''               -- added morph()
-''               -- removed gamma32
-''                  * use scale_rgbw(rgbw, gamma(level)) 
-''               -- refined PASM shift_out code
-''               -- modified PASM shift_out code for better precision  
-''               -- modified startx() interface
-''               -- consolodated for 24- and 32-bit pixels
-''               -- updated WS2812b timing and removed swap flag from standard start methods
-''
-'' =================================================================================================
-
-{ -------------------------------------- }
-{  NOTE: Requires system clock >= 80MHz  }
-{ -------------------------------------- }
-
-{
-  Important Note:
-
-    In order to accomdate 24- and 32-bit pixels, the data for 24-bit pixels must be left
-    aligned in long holding the RGB value. In previous drivers, the data was right aligned.
-
-    old format: $00_RR_GG_BB
-    new format: $RR_GG_BB_00
-
-    BYTE0 of the pixel data holds the white channel for RBGW pixels.
-
-    $RR_GG_BB_WW
-
-    The driver needs to know the data pixel length: 24 (rgb) or 32 (rgbw) bits
+    NOTE: This is a modified version of jm_rgbx_pixel.spin,
+        originally written by Jon McPhalen
 }
 #define NEOPIXEL
 #include "lib.gfx.bitmap.spin"
