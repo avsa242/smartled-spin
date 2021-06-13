@@ -4,7 +4,7 @@
     Author: Jesse Burt
     Description: Driver for various smart LED arrays
     Started Jan 4, 2020
-    Updated Apr 4, 2021
+    Updated Jun 13, 2021
     See end of file for terms of use.
     --------------------------------------------
 
@@ -26,27 +26,35 @@ CON
   ' -- modified for RGB and RGBW pixels
 
   '             RR GG BB WW
-    BLACK      = $00_00_00_00
-    RED        = $FF_00_00_00
-    GREEN      = $00_FF_00_00
-    BLUE       = $00_00_FF_00
-    WHITE      = $FF_FF_FF_00
-    WHITE2     = $00_00_00_FF   
-    CYAN       = $00_FF_FF_00
-    MAGENTA    = $FF_00_FF_00
-    YELLOW     = $FF_FF_00_00
-    CHARTREUSE = $7F_FF_00_00
-    ORANGE     = $FF_60_00_00
-    AQUAMARINE = $7F_FF_D4_00
-    PINK       = $FF_5F_5F_00
-    TURQUOISE  = $3F_E0_C0_00
-    REALWHITE  = $C8_FF_FF_00
-    INDIGO     = $3F_00_7F_00
-    VIOLET     = $BF_7F_BF_00
-    MAROON     = $32_00_10_00
-    BROWN      = $0E_06_00_00
-    CRIMSON    = $DC_28_3C_00
-    PURPLE     = $8C_00_FF_00
+    BLACK       = $00_00_00_00
+    RED         = $FF_00_00_00
+    GREEN       = $00_FF_00_00
+    BLUE        = $00_00_FF_00
+    WHITE       = $FF_FF_FF_00
+    WHITE2      = $00_00_00_FF
+    CYAN        = $00_FF_FF_00
+    MAGENTA     = $FF_00_FF_00
+    YELLOW      = $FF_FF_00_00
+    CHARTREUSE  = $7F_FF_00_00
+    ORANGE      = $FF_60_00_00
+    AQUAMARINE  = $7F_FF_D4_00
+    PINK        = $FF_5F_5F_00
+    TURQUOISE   = $3F_E0_C0_00
+    REALWHITE   = $C8_FF_FF_00
+    INDIGO      = $3F_00_7F_00
+    VIOLET      = $BF_7F_BF_00
+    MAROON      = $32_00_10_00
+    BROWN       = $0E_06_00_00
+    CRIMSON     = $DC_28_3C_00
+    PURPLE      = $8C_00_FF_00
+
+    WS2811      = $2811
+    WS2812      = $2812
+    WS2812B     = $2812B
+    WS2813      = $2813
+    SK6812_24   = $6812_24
+    SK6812_32   = $6812_32
+    TM1803      = $1803
 
 VAR
 
