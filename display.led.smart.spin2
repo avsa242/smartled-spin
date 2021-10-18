@@ -5,11 +5,12 @@
     Description: Driver for various smart LED arrays
     Copyright (c) 2021
     Started Jun 13, 2021
-    Updated Jun 13, 2021
+    Updated Oct 18, 2021
     See end of file for terms of use.
     --------------------------------------------
 }
 #define NEOPIXEL
+#define MEMMV_NATIVE longmove
 #include "lib.gfx.bitmap.spin2"
 
 CON
