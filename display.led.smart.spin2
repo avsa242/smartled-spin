@@ -5,7 +5,7 @@
     Description: Driver for various smart LED arrays
     Copyright (c) 2022
     Started Jun 13, 2021
-    Updated Jan 25, 2022
+    Updated Jan 30, 2022
     See end of file for terms of use.
     --------------------------------------------
 }
@@ -87,10 +87,7 @@ CON
 VAR
 
     long _cog
-    long _ptr_drawbuffer, _buff_sz
-    long _disp_width, _disp_height, _disp_xmax, _disp_ymax
     long _nr_pix
-    long _bytesperln
     long _mdl_t0h, _mdl_t0l, _mdl_t1h, _mdl_t1l, _mdl_per, _mptr_update, _model
     long _t0h, _t0l, _t1h, _t1l, _smled_pin, _tres
 

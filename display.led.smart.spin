@@ -4,7 +4,7 @@
     Author: Jesse Burt
     Description: Driver for various smart LED arrays
     Started Jan 4, 2020
-    Updated Jan 25, 2022
+    Updated Jan 30, 2022
     See end of file for terms of use.
     --------------------------------------------
 
@@ -59,19 +59,17 @@ CON
 VAR
 
     long _cog
-    long _ptr_framebuffer, _ptr_drawbuffer, _buff_sz            ' pointer to active pixel buffer
-    long _disp_width, _disp_height, _disp_xmax, _disp_ymax
-    long _npixels                                               ' number of pixels in buffer
-    word _bytesperln
+    long _ptr_framebuffer                       ' pointer to active pixel buffer
+    long _npixels                               ' number of pixels in buffer
 
 ' do not modify order; this structure passed to PASM cog
 '
-    long _connection                                            ' compressed connection details
-    long _resetticks                                            ' ticks in reset period
-    long _rgfix                                                 ' swap r&g? + bit count for pixels
-    long _t0h                                                   ' bit0 high time (ticks)      
-    long _t1h                                                   ' bit1 high time (ticks)
-    long _cycleticks                                            ' ticks in 1.25us
+    long _connection                            ' compressed connection details
+    long _resetticks                            ' ticks in reset period
+    long _rgfix                                 ' swap r&g? + bit count for pixels
+    long _t0h                                   ' bit0 high time (ticks)
+    long _t1h                                   ' bit1 high time (ticks)
+    long _cycleticks                            ' ticks in 1.25us
     long _updateframe
 
 PUB Null
