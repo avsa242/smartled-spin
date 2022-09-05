@@ -16,23 +16,25 @@ P1/SPIN1:
 * 80MHz Fsys
 * spin-standard-library
 * 1 extra core/cog for the PASM SmartLED engine
-* Presence of bitmap graphics library
+* lib.gfx.bitmap.spin (provided by spin-standard-library)
 
 P2/SPIN2:
 * 20MHz Fsys minimum
 * p2-spin-standard-library
-* Presence of bitmap graphics library
+* lib.gfx.bitmap.spin2 (provided by p2-spin-standard-library)
 
 ## Compiler Compatibility
 
-* P1/SPIN1 FlexSpin (bytecode): OK, tested with 5.9.10-beta
-* P1/SPIN1 FlexSpin (native): OK, tested with 5.9.10-beta
-* P2/SPIN2 FlexSpin (nu-code): Untested
-* P2/SPIN2 FlexSpin (native): OK, tested with 5.9.10-beta
-* P1/SPIN1 OpenSpin (bytecode): Untested (deprecated)
-* ~~BST~~ (incompatible - no preprocessor)
-* ~~Propeller Tool~~ (incompatible - no preprocessor)
-* ~~PNut~~ (incompatible - no preprocessor)
+| Processor | Language | Compiler               | Backend     | Status                |
+|-----------|----------|------------------------|-------------|-----------------------|
+| P1        | SPIN1    | FlexSpin (5.9.14-beta) | Bytecode    | OK                    |
+| P1        | SPIN1    | FlexSpin (5.9.14-beta) | Native code | OK                    |
+| P1        | SPIN1    | OpenSpin (1.00.81)     | Bytecode    | Untested (deprecated) |
+| P2        | SPIN2    | FlexSpin (5.9.14-beta) | NuCode      | Untested              |
+| P2        | SPIN2    | FlexSpin (5.9.14-beta) | Native code | OK                    |
+| P1        | SPIN1    | Brad's Spin Tool (any) | Bytecode    | Unsupported           |
+| P1, P2    | SPIN1, 2 | Propeller Tool (any)   | Bytecode    | Unsupported           |
+| P1, P2    | SPIN1, 2 | PNut (any)             | Bytecode    | Unsupported           |
 
 ## Hardware compatibility
 
@@ -40,5 +42,5 @@ P2/SPIN2:
 
 ## Limitations
 
-* Very early in development - may malfunction, or outright fail to build
+* TBD
 
