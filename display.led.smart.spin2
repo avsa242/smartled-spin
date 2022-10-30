@@ -206,7 +206,7 @@ PUB set_model(model): curr_model
             _mdl_t1l := WS2811_T1L
             _mdl_per := WS2811_BITPER
             _tres := WS2811_TRES
-            _show := @updatergb24
+            _show := @show_rgb24
         WS2812:
             _mdl_t0h := WS2812_T0H
             _mdl_t0l := WS2812_T0L
@@ -214,7 +214,7 @@ PUB set_model(model): curr_model
             _mdl_t1l := WS2812_T1L
             _mdl_per := WS2812_BITPER
             _tres := WS2812_TRES
-            _show := @updategrb24
+            _show := @show_grb24
         WS2812B:
             _mdl_t0h := WS2812B_T0H
             _mdl_t0l := WS2812B_T0L
@@ -222,7 +222,7 @@ PUB set_model(model): curr_model
             _mdl_t1l := WS2812B_T1L
             _mdl_per := WS2812B_BITPER
             _tres := WS2812B_TRES
-            _show := @updategrb24
+            _show := @show_grb24
         WS2813:
             _mdl_t0h := WS2813_T0H
             _mdl_t0l := WS2813_T0L
@@ -230,7 +230,7 @@ PUB set_model(model): curr_model
             _mdl_t1l := WS2813_T1L
             _mdl_per := WS2813_BITPER
             _tres := WS2813_TRES
-            _show := @updatergb24
+            _show := @show_rgb24
         SK6812_24:
             _mdl_t0h := SK6812_T0H
             _mdl_t0l := SK6812_T0L
@@ -238,7 +238,7 @@ PUB set_model(model): curr_model
             _mdl_t1l := SK6812_T1L
             _mdl_per := SK6812_BITPER
             _tres := SK6812_TRES
-            _show := @updategrb24
+            _show := @show_grb24
         SK6812_32:
             _mdl_t0h := SK6812_T0H
             _mdl_t0l := SK6812_T0L
@@ -246,7 +246,7 @@ PUB set_model(model): curr_model
             _mdl_t1l := SK6812_T1L
             _mdl_per := SK6812_BITPER
             _tres := SK6812_TRES
-            _show := @updategrb32
+            _show := @show_grb32
         TM1803:
             _mdl_t0h := TM1803_T0H
             _mdl_t0l := TM1803_T0L
@@ -254,7 +254,7 @@ PUB set_model(model): curr_model
             _mdl_t1l := TM1803_T1L
             _mdl_per := TM1803_BITPER
             _tres := TM1803_TRES
-            _show := @updatergb24
+            _show := @show_rgb24
         other:
             return _model
     set_clock(800_000)
@@ -265,7 +265,7 @@ PUB show()
 '   Call method pointed to (set by set_model())
     _show()
 
-PUB update_grb24() | t0h, t0l, t1h, t1l, smled_pin, tres, pix_nr, color, bit, tmp
+PUB show_grb24() | t0h, t0l, t1h, t1l, smled_pin, tres, pix_nr, color, bit, tmp
 ' Update G-R-B 24bpp smart-LED array
     longmove(@t0h, @_t0h, 6)                    ' copy timings to local vars
 
@@ -292,7 +292,7 @@ PUB update_grb24() | t0h, t0l, t1h, t1l, smled_pin, tres, pix_nr, color, bit, tm
     pinl(smled_pin)                             ' reset code (end of array)
     waitus(tres)
 
-PUB update_grb32() | t0h, t0l, t1h, t1l, smled_pin, tres, pix_nr, color, bit, tmp
+PUB show_grb32() | t0h, t0l, t1h, t1l, smled_pin, tres, pix_nr, color, bit, tmp
 ' Update G-R-B 32bpp smart-LED array
     longmove(@t0h, @_t0h, 6)                    ' copy timings to local vars
 
@@ -319,7 +319,7 @@ PUB update_grb32() | t0h, t0l, t1h, t1l, smled_pin, tres, pix_nr, color, bit, tm
     pinl(smled_pin)                             ' reset code (end of array)
     waitus(tres)
 
-PUB update_rgb24() | t0h, t0l, t1h, t1l, smled_pin, tres, pix_nr, color, bit
+PUB show_rgb24() | t0h, t0l, t1h, t1l, smled_pin, tres, pix_nr, color, bit
 ' Update R-G-B 24bpp smart-LED array
     longmove(@t0h, @_t0h, 6)                    ' copy timings to local vars
 
