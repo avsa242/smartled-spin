@@ -16,12 +16,12 @@ P1/SPIN1:
 * 80MHz Fsys
 * spin-standard-library
 * 1 extra core/cog for the PASM SmartLED engine
-* lib.gfx.bitmap.spin (provided by spin-standard-library)
+* graphics.common.spinh (provided by spin-standard-library)
 
 P2/SPIN2:
 * 20MHz Fsys minimum
 * p2-spin-standard-library
-* lib.gfx.bitmap.spin2 (provided by p2-spin-standard-library)
+* graphics.common.spin2h (provided by p2-spin-standard-library)
 
 ## Compiler Compatibility
 
