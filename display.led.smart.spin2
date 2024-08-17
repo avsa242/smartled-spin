@@ -19,8 +19,6 @@
 
 CON
 
-    BYTESPERPX      = 4
-    MAX_COLOR       = 16_777_215
 
     { -- default I/O configuration - can be overridden in the parent object }
     LED_PIN         = 0
@@ -29,9 +27,12 @@ CON
     MODEL           = WS2812B
     { -- }
 
+    MAX_COLOR       = 16_777_215
+    BYTESPERPX      = 4
     BUFF_SZ         = (WIDTH*HEIGHT)*BYTESPERPX
     NR_PIXELS       = WIDTH*HEIGHT
 
+'                      RR GG BB WW
     BLACK           = $00_00_00_00
     RED             = $FF_00_00_00
     GREEN           = $00_FF_00_00
@@ -121,6 +122,7 @@ CON
     TM1803_T1L      = 680_000 -130_000
     TM1803_TRES     = 24                        ' usec
 
+
 VAR
 
     long _cog
@@ -130,12 +132,15 @@ VAR
 
     long _framebuffer[(WIDTH*HEIGHT)*BYTESPERPX]
 
+
 PUB null()
 ' This is not a top-level object
+
 
 PUB start(): status
 ' Start the driver using default I/O settings
     return startx(LED_PIN, WIDTH, HEIGHT, MODEL, @_framebuffer)
+
 
 PUB startx(SMLED_PIN, DISP_W, DISP_H, led_model, ptr_fb): status
 ' Start smart-LED engine
@@ -159,14 +164,17 @@ PUB startx(SMLED_PIN, DISP_W, DISP_H, led_model, ptr_fb): status
         return _cog := (cogid() + 1)
     return FALSE
 
+
 PUB stop()
 ' Deinitialize engine
     pinf(_smled_pin)
     longfill(@_ptr_drawbuffer, 0, 22)
 
+
 PUB clear()
 ' Clear the display buffer
     longfill(_ptr_drawbuffer, _bgcolor, _nr_pix)
+
 
 PUB plot(x, y, color)
 ' Plot pixel at (x, y) in color
@@ -174,12 +182,14 @@ PUB plot(x, y, color)
         return                                  ' coords out of bounds, ignore
     long[_ptr_drawbuffer][x + (y * _disp_width)] := color
 
+
 PUB point(x, y): pix_clr
 ' Get color of pixel at x, y
     x := 0 #> x <# _disp_xmax
     y := 0 #> y <# _disp_ymax
 
     return long[_ptr_drawbuffer][x + (y * _disp_width)]
+
 
 PUB set_clock(freq) | bitper
 ' Set clock frequency used to calculate timings
@@ -190,6 +200,7 @@ PUB set_clock(freq) | bitper
     _t0l := (((_mdl_t0l / _mdl_per) * bitper) / 1_000)
     _t1h := (((_mdl_t1h / _mdl_per) * bitper) / 1_000)
     _t1l := (((_mdl_t1l / _mdl_per) * bitper) / 1_000)
+
 
 PUB set_model(model): curr_model
 ' Set model of smart-LED array
@@ -263,10 +274,12 @@ PUB set_model(model): curr_model
     set_clock(800_000)
     return model
 
+
 PUB show()
 ' Send display buffer to smart-LED array
 '   Call method pointed to (set by set_model())
     _show()
+
 
 PUB show_grb24() | t0h, t0l, t1h, t1l, smled_pin, tres, pix_nr, color, bit, tmp
 ' Update G-R-B 24bpp smart-LED array
@@ -295,6 +308,7 @@ PUB show_grb24() | t0h, t0l, t1h, t1l, smled_pin, tres, pix_nr, color, bit, tmp
     pinl(smled_pin)                             ' reset code (end of array)
     waitus(tres)
 
+
 PUB show_grb32() | t0h, t0l, t1h, t1l, smled_pin, tres, pix_nr, color, bit, tmp
 ' Update G-R-B 32bpp smart-LED array
     longmove(@t0h, @_t0h, 6)                    ' copy timings to local vars
@@ -322,6 +336,7 @@ PUB show_grb32() | t0h, t0l, t1h, t1l, smled_pin, tres, pix_nr, color, bit, tmp
     pinl(smled_pin)                             ' reset code (end of array)
     waitus(tres)
 
+
 PUB show_rgb24() | t0h, t0l, t1h, t1l, smled_pin, tres, pix_nr, color, bit
 ' Update R-G-B 24bpp smart-LED array
     longmove(@t0h, @_t0h, 6)                    ' copy timings to local vars
@@ -345,6 +360,7 @@ PUB show_rgb24() | t0h, t0l, t1h, t1l, smled_pin, tres, pix_nr, color, bit
                 endasm
     pinl(smled_pin)                             ' reset code (end of array)
     waitus(tres)
+
 
 PRI memfill(xs, ys, val, count)
 ' Fill region of display buffer memory

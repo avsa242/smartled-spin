@@ -1,17 +1,17 @@
 {
-    --------------------------------------------
-    Filename: SmartLED-Minimal-Demo.spin2
-    Author: Jesse Burt
-    Description: Demo of minimum code to light a
-        single smart LED (P2 version)
-    Started Jun 13, 2021
-    Updated Aug 8, 2023
-    See end of file for terms of use.
-    --------------------------------------------
+----------------------------------------------------------------------------------------------------
+    Filename:       SmartLED-Minimal-Demo.spin2
+    Description:    Demo showing minimum necessary code to light a single smart LED
+    Author:         Jesse Burt
+    Started:        Jun 13, 2021
+    Updated:        Aug 17, 2024
+    Copyright (c) 2024 - See end of file for terms of use.
+----------------------------------------------------------------------------------------------------
 }
+
 CON
 
-    _clkfreq    = 160_000_000                   ' minimum 20_000_000
+    _clkfreq    = 180_000_000                   ' minimum 20_000_000
     _xtlfreq    = 20_000_000
 
 
@@ -28,6 +28,7 @@ OBJ
 '   $6812_32: SK6812_32 (RGBW)
 '   $1803: TM1803
 
+
 PUB main()
 
     led.start()
@@ -35,9 +36,10 @@ PUB main()
     led.show()                                  ' send the data to the pixel(s)
     repeat
 
+
 DAT
 {
-Copyright 2023 Jesse Burt
+Copyright 2024 Jesse Burt
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
 associated documentation files (the "Software"), to deal in the Software without restriction,

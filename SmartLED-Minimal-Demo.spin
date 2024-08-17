@@ -1,14 +1,14 @@
 {
-    --------------------------------------------
-    Filename: SmartLED-Minimal-Demo.spin
-    Author: Jesse Burt
-    Description: Demo of minimum code to light a
-        single smart LED
-    Started Jun 13, 2021
-    Updated Aug 8, 2023
-    See end of file for terms of use.
-    --------------------------------------------
+----------------------------------------------------------------------------------------------------
+    Filename:       SmartLED-Minimal-Demo.spin
+    Description:    Demo showing minimum necessary code to light a single smart LED
+    Author:         Jesse Burt
+    Started:        Jun 13, 2021
+    Updated:        Aug 17, 2024
+    Copyright (c) 2024 - See end of file for terms of use.
+----------------------------------------------------------------------------------------------------
 }
+
 CON
 
     _clkmode    = xtal1 + pll16x                ' _must_ be 80MHz
@@ -28,15 +28,17 @@ OBJ
 '   $6812_32: SK6812_32 (RGBW)
 '   $1803: TM1803
 
-PUB main{}
+
+PUB main()
 
     led.start()
     led.plot(0, 0, $ff_00_00_00)                ' x, y, R_G_B or R_G_B_W color
     repeat
 
+
 DAT
 {
-Copyright 2023 Jesse Burt
+Copyright 2024 Jesse Burt
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
 associated documentation files (the "Software"), to deal in the Software without restriction,

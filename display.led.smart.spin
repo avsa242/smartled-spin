@@ -1,12 +1,12 @@
 {
----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
     Filename:       display.led.smart.spin
     Description:    Driver for various smart LED arrays
     Author:         Jesse Burt
     Started:        Jan 4, 2020
     Updated:        Feb 4, 2024
     Copyright (c) 2024 - See end of file for terms of use.
----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
 
     NOTE: This is based on jm_rgbx_pixel.spin,
         originally written by Jon McPhalen.
@@ -21,10 +21,6 @@
 #endif
 
 CON
-
-    MAX_PIXELS  = 1024                                          ' max pixels per strip
-    MAX_COLOR   = 16_777_215
-    BYTESPERPX  = 4
 
     { -- default I/O configuration - can be overridden in the parent object }
     LED_PIN     = 0
@@ -42,7 +38,9 @@ CON
     SK6812_32   = $6812_32
     TM1803      = $1803
 
-
+    MAX_PIXELS  = 1024                                          ' max pixels per strip
+    MAX_COLOR   = 16_777_215
+    BYTESPERPX  = 4
     BUFF_SZ     = (WIDTH * HEIGHT) * BYTESPERPX
     NR_PIXELS   = WIDTH*HEIGHT
 
@@ -52,7 +50,7 @@ CON
   ' -- some alterations by JM
   ' -- modified for RGB and RGBW pixels
 
-  '             RR GG BB WW
+  '                RR GG BB WW
     BLACK       = $00_00_00_00
     RED         = $FF_00_00_00
     GREEN       = $00_FF_00_00
@@ -75,6 +73,7 @@ CON
     CRIMSON     = $DC_28_3C_00
     PURPLE      = $8C_00_FF_00
 
+
 VAR
 
     long _cog
@@ -93,13 +92,16 @@ VAR
 
     long _framebuffer[BUFF_SZ]
 
-PUB null{}
+
+PUB null()
 ' This is not a top-level object
 ' -- this code should only be called from another object
+
   
 PUB start(): status
 ' Start the driver using default I/O settings
     return startx(LED_PIN, WIDTH, HEIGHT, MODEL, @_framebuffer)
+
 
 PUB startx(SMLED_PIN, DISP_W, DISP_H, led_model, ptr_fb): status | ustix, holdoff, rgswap, bits, ns0h, ns1h, nsperiod, count
 ' Start smart-LED engine
@@ -156,7 +158,7 @@ PUB startx(SMLED_PIN, DISP_W, DISP_H, led_model, ptr_fb): status | ustix, holdof
         OTHER:
             return FALSE
 
-    stop{}                                      ' stop if running
+    stop()                                      ' stop if running
     dira[SMLED_PIN] := 0                        ' clear tx pin in this cog
 
     if (clkfreq < 80_000_000)                   ' requires 80MHz clock
@@ -192,11 +194,13 @@ PUB startx(SMLED_PIN, DISP_W, DISP_H, led_model, ptr_fb): status | ustix, holdof
     _bytesperln := _disp_width * BYTESPERPX
     return _cog
 
-PUB stop{}
+
+PUB stop()
 ' Stops pixel driver cog (if running)
     if (_cog)
         cogstop(_cog - 1)
         _cog := 0
+
 
 PUB setup_led_array(count, pin, bits): c
 ' Set attributes of the connected LED array
@@ -214,13 +218,16 @@ PUB setup_led_array(count, pin, bits): c
 
     _connection := c                                            ' set new connection
 
-PUB clear{}
+
+PUB clear()
 ' Clear the display buffer
     longfill(_ptr_drawbuffer, _bgcolor, _npixels)
 
-PUB connected{}
+
+PUB connected(): c
 ' Returns true when latest connection details picked up by driver
     return (_connection == 0)
+
 
 PUB draw_to(addr)
 ' Set address of (optional) draw/render buffer
@@ -229,15 +236,18 @@ PUB draw_to(addr)
 '       once a complete frame is rendered.
     _ptr_drawbuffer := addr
 
-PUB num_pixels{}
+
+PUB num_pixels()
 ' Returns number of pixels in assiged pixel array                      
     return _npixels
+
 
 PUB plot(x, y, color)
 ' Plot pixel at (x, y) in color
     if (x < 0 or x > _disp_xmax) or (y < 0 or y > _disp_ymax)
         return                                  ' coords out of bounds, ignore
     long[_ptr_drawbuffer][x + (y * _disp_width)] := color
+
 
 PUB point(x, y): pix_clr
 ' Get color of pixel at x, y
@@ -246,10 +256,12 @@ PUB point(x, y): pix_clr
 
     return long[_ptr_drawbuffer][x + (y * _disp_width)]
 
-PUB show{}
+
+PUB show()
 ' Write the draw buffer to the display
 '   NOTE: This is only required when using double-buffering
     longmove(_ptr_framebuffer, _ptr_drawbuffer, _buff_sz/4)
+
 
 PRI memfill(xs, ys, val, count)
 ' Fill region of display buffer memory
@@ -296,6 +308,7 @@ DAT
                         byte    199, 202, 204, 206, 209, 211, 213, 215
                         byte    218, 220, 223, 225, 227, 230, 232, 235
                         byte    237, 240, 242, 245, 247, 250, 252, 255
+
 
 DAT { auto-run driver } 
                         org     0
