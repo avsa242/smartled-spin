@@ -4,8 +4,8 @@
     Description:    Driver for various smart LED arrays
     Author:         Jesse Burt
     Started:        Jan 4, 2020
-    Updated:        Feb 4, 2024
-    Copyright (c) 2024 - See end of file for terms of use.
+    Updated:        Feb 7, 2025
+    Copyright (c) 2025 - See end of file for terms of use.
 ----------------------------------------------------------------------------------------------------
 
     NOTE: This is based on jm_rgbx_pixel.spin,
@@ -39,9 +39,17 @@ CON
     TM1803      = $1803
 
     MAX_PIXELS  = 1024                                          ' max pixels per strip
-    MAX_COLOR   = 16_777_215
-    BYTESPERPX  = 4
-    BUFF_SZ     = (WIDTH * HEIGHT) * BYTESPERPX
+
+    BPP         = 32                            ' bits per pixel/color depth of the display
+    BYTESPERPX  = 1 #> (BPP/8)                  ' limit to minimum of 1
+    BPPDIV      = 1                             ' limit to range BYTESPERPX .. (8/BPP)
+    BUFF_SZ     = (WIDTH * HEIGHT) / BPPDIV
+    MAX_COLOR   = 16777215
+    XMAX        = WIDTH-1
+    YMAX        = HEIGHT-1
+    CENTERX     = WIDTH/2
+    CENTERY     = HEIGHT/2
+
     NR_PIXELS   = WIDTH*HEIGHT
 
 
@@ -426,7 +434,7 @@ t3                      res     1
 
 DAT
 {
-Copyright 2024 Jesse Burt
+Copyright 2025 Jesse Burt
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
 associated documentation files (the "Software"), to deal in the Software without restriction,
